@@ -4,6 +4,7 @@ module.exports = (grunt) ->
     grunt.task.loadNpmTasks 'grunt-contrib-watch'
     grunt.task.loadNpmTasks 'grunt-coffeelint'
     grunt.task.loadNpmTasks 'grunt-contrib-clean'
+    grunt.task.loadNpmTasks 'grunt-mozilla-addon-sdk'
 
     grunt.initConfig
         pkg:
@@ -46,9 +47,22 @@ module.exports = (grunt) ->
                 files: '*.coffee'
                 tasks: [ 'coffeelint', 'coffee:dist', 'mochaTest:dist' ]
 
+        "mozilla-addon-sdk":
+            '1_16':
+              options:
+                revision: '1.16'
+
+        "mozilla-cfx":
+          custom_cmd:
+            options:
+              "mozilla-addon-sdk": "1_16"
+              extension_dir: "."
+              command: "test"
+
+
     grunt.event.on 'coffee.error', (msg) ->
         grunt.log.write msg
 
-    grunt.registerTask 'test', ['coffeelint', 'coffee']
+    grunt.registerTask 'test', ['coffeelint', 'coffee', 'mozilla-addon-sdk','mozilla-cfx']
     grunt.registerTask 'default', ['coffeelint', 'coffee']
     grunt.registerTask 'dev', ['watch']

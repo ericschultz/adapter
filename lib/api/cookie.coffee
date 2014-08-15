@@ -1,3 +1,5 @@
+Event = require('event')
+
 class Cookie
 
 class CookieStore
@@ -16,9 +18,13 @@ class Cookies
   @promised = require('sdk/core/promise');
   @_ = require('underscore');
 
-  ###
-  constructor: (@cookieManager, @cookieService, @ioService, @urlCreator, @_, @promised) ->
 
+  ###
+  constructor: (@cookieManager, @cookieService, @ioService, @urlCreator,
+    @_, @promised, @eventTarget) ->
+
+
+  onChanged: new Event(@eventTarget, 'changed')
 
   get: (details, callback) =>
     #do we have host permissions for details.url?
@@ -26,7 +32,7 @@ class Cookies
       url = @urlCreator.URL(details.url)
       enumerator = generatorFromSimpleEnumerator(
         @cookieManager.getCookiesFromHost(url.host))
-      cookieResult = @_.find(enumerator, (cookie) =>
+      cookieResult = @_.find(enumerator, (cookie) ->
         cookie.name is details.name)
 
       #check for undefined?
@@ -43,17 +49,18 @@ class Cookies
       ourCookiesEnumerator = null
       if details.domain?
         ourCookiesEnumerator =
-          generatorFromSimpleEnumerator(@cookieManager.getCookiesFromHost(domain))
+          generatorFromSimpleEnumerator(
+            @cookieManager.getCookiesFromHost(domain))
       else
         ourCookiesEnumerator = @cookieService
 
       if details.name?
         ourCookiesEnumerator = @_.where(ourCookiesEnumerator,
-          (cookie) => details.name is cookie.name )
+          (cookie) -> details.name is cookie.name )
 
       if details.path?
         ourCookiesEnumerator = @_.where(ourCookiesEnumerator,
-          (cookie) => details.path is cookie.path)
+          (cookie) -> details.path is cookie.path)
 
       if details.secure? and details.secure
         ourCookiesEnumerator = @_.where(ourCookiesEnumerator,
@@ -63,7 +70,7 @@ class Cookies
         ourCookiesEnumerator = @_.where(ourCookiesEnumerator,
           (cookie) -> cookie.expires is 0)
 
-      callback(@_.map(ourCookiesEnumerator, (cookie) => resultCookie(cookie)))
+      callback(@_.map(ourCookiesEnumerator, (cookie) -> resultCookie(cookie)))
     )
 
 

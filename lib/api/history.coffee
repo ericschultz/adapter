@@ -24,21 +24,22 @@ class History
 
 
 
+
   addUrl: (details, callback) =>
-    @asyncHistory.getPlacesInfo(details.url, ())
+    @asyncHistory.getPlacesInfo(details.url)
 
 
   search: (query, callback) =>
 
   deleteUrl: (details, callback) =>
 
-      promised(() =>
+      @promised(() =>
         if details.url?
-          @nsIBrowserHistory.remove(@ioService.newURI(details.url)))
+          @nsIBrowserHistory.remove(@ioService.newURI(details.url))
           if callback?
             callback()
-
       )
+
   deleteRange: (range, callback) =>
     @promised(() =>
       @nsIBrowserHistory.removeRange(range.startTime, range.EndTime)

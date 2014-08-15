@@ -1,4 +1,7 @@
 class Event
+  ###
+  const { EventTarget } = require("sdk/event/target");
+  ###
   constructor: (@eventTarget, @eventName) ->
 
   addListener: (callback) =>
