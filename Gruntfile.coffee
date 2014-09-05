@@ -45,7 +45,7 @@ module.exports = (grunt) ->
         watch:
             dist:
                 files: '*.coffee'
-                tasks: [ 'coffeelint', 'coffee:dist', 'mochaTest:dist' ]
+                tasks: [ 'coffeelint', 'coffee:dist']
 
         "mozilla-addon-sdk":
             '1_16':

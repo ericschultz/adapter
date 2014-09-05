@@ -2,8 +2,7 @@
 Cu.import("resource://gre/modules/devtools/Console.jsm")
 Cu.import('resource://gre/modules/FileUtils.jsm')
 netUtils = Cu.import("resource://gre/modules/NetUtil.jsm")
-zipReader = Cc["@mozilla.org/libjar/zip-reader;1"]
-              .createInstance(Ci.nsIZipReader)
+zip = require("zip.js/zip.js")
 
 class CrxReader
   ###
@@ -20,12 +19,12 @@ class CrxReader
     console.log(Object.prototype.toString.call(zipReader)
       + "in text-crxreader.open")
 
-    crxFile = new FileUtils.File(@fileName)
+    crxFile = File(@fileName)
     try
-      zipReader.open(crxFile)
+      @blobReader = new zip.BlobReader(crxFile)
     catch error
       #throw error
-      zipReader.close
+      @blobReader.error
 
 
 
@@ -34,6 +33,7 @@ class CrxReader
       + "in crx_reader.getManifest")
     #console.debug(@zipReader)
     #console.debug(Object.getOwnPropertyNames(@zipReader))
+    zip.createReader
     entries = zipReader.findEntries('*')
     console.debug("we have more entries?:" + entries.hasMore())
     while entries.hasMore()
